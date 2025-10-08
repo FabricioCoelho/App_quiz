@@ -23,9 +23,6 @@ data class QuizUiState(
     val currentQuestion: Question?
         get() = questions.getOrNull(currentQuestionIndex)
 
-    val currentAnswers: List<String>
-        get() = currentQuestion?.opcoes ?: emptyList()
-
     val correctAnswer: String?
         get() = currentQuestion?.correta
 
@@ -39,9 +36,6 @@ data class QuizUiState(
         get() = currentQuestionIndex >= questions.size && questions.isNotEmpty() && !isLoading
 }
 
-// -------------------------
-// ViewModel do Quiz
-// -------------------------
 class QuizViewModel(private val repository: PerguntaRepository) : ViewModel() {
 
     private val _uiState = MutableStateFlow(QuizUiState())
@@ -66,6 +60,12 @@ class QuizViewModel(private val repository: PerguntaRepository) : ViewModel() {
             allQuestions = repository.loadQuestions()
             _categories.value = allQuestions.map { it.categoria }.distinct()
             _uiState.value = _uiState.value.copy(isLoading = false)
+        }
+    }
+
+    fun setUserName(name: String) {
+        viewModelScope.launch {
+            repository.setUserName(name)
         }
     }
 
@@ -110,9 +110,16 @@ class QuizViewModel(private val repository: PerguntaRepository) : ViewModel() {
                 showCuriosity = false
             )
         } else {
-            _uiState.value = _uiState.value.copy(selectedCategory = null)
+            // Finaliza o quiz
+            _uiState.value = _uiState.value.copy(
+                currentQuestionIndex = nextIndex, // necessário para isQuizFinished
+                selectedAnswer = null,
+                isAnswerCorrect = null,
+                showCuriosity = false
+            )
         }
     }
+
 
     fun resetQuiz() {
         _uiState.value = QuizUiState(
