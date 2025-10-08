@@ -1,118 +1,224 @@
 package br.com.aranoua.app_quiz.ui.theme.ui.screen
 
-import androidx.compose.foundation.background
+import androidx.compose.animation.*
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import br.com.aranoua.app_quiz.ui.theme.ui.components.QuizTopBar
 import br.com.aranoua.app_quiz.ui.theme.viewmodel.QuizViewModel
+import kotlinx.coroutines.delay
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalAnimationApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun QuizScreen(viewModel: QuizViewModel, onBackToCategories: () -> Unit) {
+fun QuizScreen(
+    viewModel: QuizViewModel,
+    onBackToCategories: () -> Unit,
+    isDarkTheme: Boolean,
+    onToggleTheme: () -> Unit
+) {
     val uiState by viewModel.uiState.collectAsState()
-    val question = uiState.currentQuestion ?: return
+    val highScore by viewModel.highScore.collectAsState(initial = 0)
+
+    // Tela final
+    if (uiState.isQuizFinished) {
+        QuizEndScreen(
+            score = uiState.currentScore,
+            highScore = highScore,
+            onPlayAgain = { viewModel.resetQuiz() },
+        )
+        return
+    }
+
+    var timeLeft by remember(uiState.currentQuestionIndex) { mutableStateOf(15) }
+
+    // Temporizador
+    LaunchedEffect(uiState.currentQuestionIndex) {
+        timeLeft = 15
+        while (timeLeft > 0 && uiState.selectedAnswer == null) {
+            delay(1000)
+            timeLeft--
+        }
+        if (timeLeft == 0 && uiState.selectedAnswer == null) {
+            viewModel.nextQuestion()
+        }
+    }
+
+    val animatedScore by animateFloatAsState(targetValue = uiState.currentScore.toFloat())
+
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(uiState.selectedCategory ?: "Quiz") },
-                navigationIcon = {
-                    IconButton(onClick = {
-                        viewModel.resetQuiz()
-                        onBackToCategories()
-                    }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Voltar")
-                    }
+            QuizTopBar(
+                title = "Perguntas",
+                isDarkTheme = isDarkTheme,
+                onToggleTheme = onToggleTheme,
+                onBack = onBackToCategories,
+                onLogout = {
+                    viewModel.setUserName("") // limpa o DataStore
                 }
             )
         }
     ) { innerPadding ->
-        LazyColumn(
+        Column(
             modifier = Modifier
-                .fillMaxSize()
                 .padding(innerPadding)
+                .fillMaxSize()
                 .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            item {
-                // Pergunta e progresso
-                Text(
-                    "Pergunta ${uiState.currentQuestionIndex + 1} de ${uiState.questions.size}",
-                    style = MaterialTheme.typography.titleMedium
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(question.pergunta, style = MaterialTheme.typography.headlineSmall)
-                Spacer(modifier = Modifier.height(16.dp))
-            }
 
-            items(question.opcoes) { option ->
-                val isCorrect = option == question.correta
-                val isSelected = option == uiState.selectedAnswer
-
-                val bgColor = when {
-                    !uiState.showCuriosity -> MaterialTheme.colorScheme.surfaceVariant
-                    isSelected && isCorrect -> Color(0xFF4CAF50).copy(alpha = 0.3f)
-                    isSelected && !isCorrect -> Color(0xFFF44336).copy(alpha = 0.3f)
-                    isCorrect && uiState.showCuriosity -> Color(0xFF4CAF50).copy(alpha = 0.15f)
-                    else -> MaterialTheme.colorScheme.surfaceVariant
-                }
-
-                Button(
-                    onClick = { viewModel.answerQuestion(option) },
-                    enabled = !uiState.showCuriosity,
+            // Barra de progresso
+            if (uiState.totalQuestions > 0) {
+                LinearProgressIndicator(
+                    progress = (uiState.currentQuestionIndex + 1f) / uiState.totalQuestions,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(bgColor, shape = MaterialTheme.shapes.medium)
-                ) {
-                    Text(option)
-                }
+                        .height(8.dp)
+                        .clip(RoundedCornerShape(4.dp))
+                        .padding(vertical = 8.dp)
+                )
             }
 
-            if (uiState.showCuriosity) {
-                item {
-                    Spacer(modifier = Modifier.height(16.dp))
+            // Pontuação e tempo
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "Pontuação: ${animatedScore.toInt()}",
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Text(
+                    text = "Tempo: ${timeLeft}s",
+                    color = if (timeLeft < 5) MaterialTheme.colorScheme.error
+                    else MaterialTheme.colorScheme.onBackground,
+                    style = MaterialTheme.typography.titleMedium
+                )
+            }
 
-                    // Resultado da resposta
-                    Text(
-                        if (uiState.isAnswerCorrect == true) "✅ Correto!" else "❌ Errado!",
-                        color = if (uiState.isAnswerCorrect == true) Color(0xFF4CAF50) else Color(0xFFF44336),
-                        style = MaterialTheme.typography.titleMedium
-                    )
+            Spacer(Modifier.height(16.dp))
 
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        "💡 Curiosidade: ${question.curiosidade}",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Button(
-                        onClick = { viewModel.nextQuestion() },
-                        modifier = Modifier.fillMaxWidth()
+            AnimatedContent(
+                targetState = uiState.currentQuestionIndex,
+                transitionSpec = {
+                    slideInHorizontally(initialOffsetX = { it }) + fadeIn() togetherWith
+                            slideOutHorizontally(targetOffsetX = { -it }) + fadeOut()
+                }
+            ) { index ->
+                val question = uiState.questions.getOrNull(index)
+                if (question != null) {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            if (uiState.currentQuestionIndex == uiState.questions.size - 1) "Finalizar Quiz"
-                            else "Próxima Pergunta"
+                            text = question.pergunta,
+                            style = MaterialTheme.typography.titleLarge.copy(
+                                fontSize = 22.sp,
+                                fontWeight = FontWeight.SemiBold
+                            ),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(bottom = 24.dp)
                         )
+
+                        // Lista de opções
+                        question.opcoes.forEach { option ->
+                            AnswerOption(
+                                answerText = option,
+                                selectedAnswer = uiState.selectedAnswer,
+                                correctAnswer = uiState.correctAnswer,
+                                onSelect = { viewModel.answerQuestion(it) }
+                            )
+                        }
+
+                        Spacer(Modifier.height(16.dp))
+
+                        // Feedback e curiosidade
+                        AnimatedVisibility(visible = uiState.showCuriosity) {
+                            val color = if (uiState.isAnswerCorrect == true)
+                                MaterialTheme.colorScheme.primary
+                            else
+                                MaterialTheme.colorScheme.error
+
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text(
+                                    text = if (uiState.isAnswerCorrect == true) "Acertou! 🎉" else "Errou 😢",
+                                    color = color,
+                                    fontSize = 20.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    textAlign = TextAlign.Center
+                                )
+
+                                uiState.currentQuestion?.curiosidade?.let {
+                                    Text(
+                                        text = it,
+                                        color = MaterialTheme.colorScheme.onBackground,
+                                        textAlign = TextAlign.Center,
+                                        modifier = Modifier.padding(top = 8.dp)
+                                    )
+                                }
+
+                                Spacer(Modifier.height(12.dp))
+                                Button(onClick = { viewModel.nextQuestion() }) {
+                                    Text(if (uiState.isLastQuestion) "Finalizar" else "Próxima")
+                                }
+                            }
+                        }
                     }
                 }
             }
-
-            item {
-                Spacer(modifier = Modifier.height(24.dp))
-                Text(
-                    "Pontuação: ${uiState.currentScore} | Recorde: ${viewModel.highScore.collectAsState(initial = 0).value}",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.secondary
-                )
-            }
         }
+    }
+}
+
+@Composable
+fun AnswerOption(
+    answerText: String,
+    selectedAnswer: String?,
+    correctAnswer: String?,
+    onSelect: (String) -> Unit
+) {
+    val correctColor = Color(0xFF4CAF50)
+    val incorrectColor = Color(0xFFF44336)
+
+    val backgroundColor = when {
+        selectedAnswer == null -> MaterialTheme.colorScheme.primaryContainer
+        answerText == correctAnswer -> correctColor
+        selectedAnswer == answerText && selectedAnswer != correctAnswer -> incorrectColor
+        else -> MaterialTheme.colorScheme.surfaceVariant
+    }
+
+    val contentColor = if (backgroundColor == correctColor || backgroundColor == incorrectColor)
+        Color.White else MaterialTheme.colorScheme.onSurfaceVariant
+
+    ElevatedButton  (
+        onClick = { if (selectedAnswer == null) onSelect(answerText) },
+        colors = ButtonDefaults.buttonColors(
+            containerColor = backgroundColor,
+            contentColor = contentColor
+        ),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        elevation = ButtonDefaults.elevatedButtonElevation(6.dp),
+    ) {
+        Text(
+            text = answerText,
+            style = MaterialTheme.typography.titleMedium.copy(
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Medium
+            )
+        )
     }
 }
