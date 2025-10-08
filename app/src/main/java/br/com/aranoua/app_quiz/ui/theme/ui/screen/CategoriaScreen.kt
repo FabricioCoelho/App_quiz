@@ -14,30 +14,30 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
+import br.com.aranoua.app_quiz.ui.theme.ui.components.QuizTopBar
 import br.com.aranoua.app_quiz.ui.theme.viewmodel.QuizViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoriaScreen(
     viewModel: QuizViewModel,
-    onCategorySelected: (String) -> Unit
+    onCategorySelected: (String) -> Unit,
+    isDarkTheme: Boolean,
+    onToggleTheme: () -> Unit
 ) {
     val categories by viewModel.categories.collectAsState()
     val userName by viewModel.userName.collectAsState(initial = "Usuário")
 
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(
-                        text = "Categorias do Quiz",
-                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
-                    )
-                },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = Color.White
-                )
+            QuizTopBar(
+                title = "Categorias",
+                isDarkTheme = isDarkTheme,
+                onToggleTheme = onToggleTheme,
+                onLogout = {
+                    viewModel.setUserName("")
+                }
+
             )
         }
     ) { innerPadding ->
