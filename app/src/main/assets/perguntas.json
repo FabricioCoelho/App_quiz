@@ -1,0 +1,109 @@
+[
+  {
+    "pergunta": "Qual é a fórmula química da água?",
+    "opcoes": ["CO2", "H2O", "O2", "NaCl"],
+    "correta": "H2O",
+    "categoria": "Química",
+    "curiosidade": "A água cobre cerca de 71% da superfície da Terra e é essencial para a vida."
+  },
+  {
+    "pergunta": "Qual gás é o mais abundante na atmosfera terrestre?",
+    "opcoes": ["Oxigênio", "Gás Carbônico", "Argônio", "Nitrogênio"],
+    "correta": "Nitrogênio",
+    "categoria": "Química",
+    "curiosidade": "O nitrogênio (N2) compõe cerca de 78% da atmosfera, enquanto o oxigênio (O2) compõe cerca de 21%."
+  },
+  {
+    "pergunta": "O que o pH mede?",
+    "opcoes": ["Densidade de um líquido", "Acidez ou basicidade", "Temperatura de reação", "Concentração de sal"],
+    "correta": "Acidez ou basicidade",
+    "categoria": "Química",
+    "curiosidade": "pH 7 é neutro. Abaixo de 7 é ácido, e acima de 7 é básico (alcalino)."
+  },
+  {
+    "pergunta": "Qual elemento químico tem o símbolo 'Fe'?",
+    "opcoes": ["Flúor", "Fósforo", "Ferro", "Fermium"],
+    "correta": "Ferro",
+    "categoria": "Química",
+    "curiosidade": "O símbolo 'Fe' vem do nome latino do elemento, *ferrum*."
+  },
+  {
+    "pergunta": "Qual é o principal componente do gás natural?",
+    "opcoes": ["Butano", "Propano", "Metano", "Etano"],
+    "correta": "Metano",
+    "categoria": "Química",
+    "curiosidade": "O metano (CH4) é um gás de efeito estufa muito potente."
+  },
+
+  {
+    "pergunta": "Qual planeta é conhecido como o 'Planeta Vermelho'?",
+    "opcoes": ["Vênus", "Marte", "Júpiter", "Saturno"],
+    "correta": "Marte",
+    "categoria": "Astronomia",
+    "curiosidade": "Sua cor avermelhada é causada pela grande quantidade de óxido de ferro (ferrugem) em sua superfície."
+  },
+  {
+    "pergunta": "Qual é a nossa galáxia?",
+    "opcoes": ["Andrômeda", "Cigarro", "Via Láctea", "Triângulo"],
+    "correta": "Via Láctea",
+    "categoria": "Astronomia",
+    "curiosidade": "O nome 'Via Láctea' deriva da aparência leitosa da galáxia vista da Terra."
+  },
+  {
+    "pergunta": "O que é um buraco negro?",
+    "opcoes": ["Uma estrela apagada", "Um planeta sem luz", "Região do espaço com gravidade intensa", "Uma nebulosa escura"],
+    "correta": "Região do espaço com gravidade intensa",
+    "categoria": "Astronomia",
+    "curiosidade": "A força gravitacional de um buraco negro é tão forte que nem a luz consegue escapar dele."
+  },
+  {
+    "pergunta": "Qual o maior planeta do nosso Sistema Solar?",
+    "opcoes": ["Terra", "Saturno", "Urano", "Júpiter"],
+    "correta": "Júpiter",
+    "categoria": "Astronomia",
+    "curiosidade": "Júpiter é tão grande que todos os outros planetas do Sistema Solar caberiam dentro dele."
+  },
+  {
+    "pergunta": "Quanto tempo a luz do Sol leva para chegar à Terra (aproximadamente)?",
+    "opcoes": ["3 segundos", "8 minutos", "1 hora", "1 dia"],
+    "correta": "8 minutos",
+    "categoria": "Astronomia",
+    "curiosidade": "A luz viaja no vácuo a 299.792 quilômetros por segundo."
+  },
+
+  {
+    "pergunta": "Qual a unidade básica da vida?",
+    "opcoes": ["Molécula", "Átomo", "Célula", "Órgão"],
+    "correta": "Célula",
+    "categoria": "Biologia",
+    "curiosidade": "O corpo humano adulto tem cerca de 30 trilhões de células."
+  },
+  {
+    "pergunta": "Qual estrutura da célula é responsável pela produção de energia (ATP)?",
+    "opcoes": ["Núcleo", "Ribossomo", "Vacúolo", "Mitocôndria"],
+    "correta": "Mitocôndria",
+    "categoria": "Biologia",
+    "curiosidade": "As mitocôndrias são frequentemente chamadas de 'usinas de energia' da célula."
+  },
+  {
+    "pergunta": "Qual processo as plantas usam para converter luz solar em alimento?",
+    "opcoes": ["Respiração", "Transpiração", "Fotossíntese", "Osmose"],
+    "correta": "Fotossíntese",
+    "categoria": "Biologia",
+    "curiosidade": "A fotossíntese libera oxigênio como subproduto, vital para a maioria das formas de vida."
+  },
+  {
+    "pergunta": "Qual é a função do DNA?",
+    "opcoes": ["Transportar nutrientes", "Armazenar informação genética", "Filtrar toxinas", "Controlar o movimento"],
+    "correta": "Armazenar informação genética",
+    "categoria": "Biologia",
+    "curiosidade": "DNA significa Ácido Desoxirribonucleico e tem a forma de uma dupla hélice."
+  },
+  {
+    "pergunta": "Qual dos seguintes grupos não é classificado como vertebrado?",
+    "opcoes": ["Peixes", "Anfíbios", "Insetos", "Mamíferos"],
+    "correta": "Insetos",
+    "categoria": "Biologia",
+    "curiosidade": "Os vertebrados são animais com coluna vertebral, enquanto os insetos são invertebrados (possuem exoesqueleto)."
+  }
+]
