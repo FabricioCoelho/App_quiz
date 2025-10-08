@@ -1,0 +1,24 @@
+[
+  {
+    "pergunta": "texto",
+    "opcoes": [
+      "texto",
+      "texto",
+      "texto"
+    ],
+    "correta": 1,
+    "curiosidade": "texto",
+    "categoria": "Eclesiástico"
+  },
+  {
+    "pergunta": "texto",
+    "opcoes": [
+      "texto",
+      "texto",
+      "texto"
+    ],
+    "correta": 1,
+    "curiosidade": "texto",
+    "categoria": "Eclesiástico"
+  }
+]
