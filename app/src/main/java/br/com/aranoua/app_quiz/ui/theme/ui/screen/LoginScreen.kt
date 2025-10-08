@@ -11,6 +11,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import br.com.aranoua.app_quiz.ui.theme.ui.components.QuizTopBar
 import br.com.aranoua.app_quiz.ui.theme.viewmodel.QuizViewModel
 import kotlinx.coroutines.launch
 
@@ -18,24 +19,19 @@ import kotlinx.coroutines.launch
 @Composable
 fun LoginScreen(
     viewModel: QuizViewModel,
-    onLoginSuccess: () -> Unit
+    onLoginSuccess: () -> Unit,
+    isDarkTheme: Boolean,
+    onToggleTheme: () -> Unit
 ) {
     var userName by remember { mutableStateOf("") }
     val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(
-                        "Quiz Interativo",
-                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
-                    )
-                },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary
-                )
+            QuizTopBar(
+                title = "Login",
+                isDarkTheme = isDarkTheme,
+                onToggleTheme = onToggleTheme
             )
         }
     ) { innerPadding ->
@@ -81,7 +77,7 @@ fun LoginScreen(
                 onClick = {
                     if (userName.isNotBlank()) {
                         coroutineScope.launch {
-                            viewModel.repository.setUserName(userName)
+                            viewModel.setUserName(userName)
                             onLoginSuccess()
                         }
                     }
